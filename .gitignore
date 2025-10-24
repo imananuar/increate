@@ -1,0 +1,7 @@
+**/dist
+**/node_modules
+**/test
+**/.env
+**/.prettierrc
+**/transcription/*
+**/environments/environment.*

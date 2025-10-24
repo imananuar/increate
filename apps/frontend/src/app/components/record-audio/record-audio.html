@@ -1,0 +1,28 @@
+<div class="p-4 text-center">
+  <h2>🎙️ Record Audio</h2>
+
+  <button (click)="startRecording()" [disabled]="isRecording"  class="btn btn-primary m-2">
+    Start Recording
+  </button>
+  <button (click)="stopRecording()" [disabled]="!isRecording" class="btn btn-danger m-2">
+    Stop Recording
+  </button>
+
+  @if (isRecording) {
+    <div class="mt-4">
+      <p>CURRENTLY IS RECORDING</p>
+    </div>
+  }
+
+  @if (audioURL) {
+    <div class="mt-4">
+        <audio [src]="audioURL" controls></audio>
+        <button (click)="uploadAudio()" class="btn btn-success mt-3">Upload to Backend</button>
+    </div>
+
+  @if (isLoading) {
+    <app-loading [loadingText]="`Creating Invoice`"></app-loading>
+  }
+
+}
+</div>
