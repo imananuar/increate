@@ -1,12 +1,13 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { Invoice } from '../../model/invoice.model';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { InvoiceService } from '../../services/invoice.service';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule, CurrencyPipe, DatePipe, TitleCasePipe } from '@angular/common';
+import { CurrencySymbolPipe } from '../../pipes/currency-symbol-pipe';
 
 @Component({
   selector: 'app-invoice',
-  imports: [CommonModule, DatePipe],
+  imports: [CommonModule, DatePipe, TitleCasePipe, CurrencySymbolPipe],
   templateUrl: './invoice.component.html'
 })
 export class InvoiceComponent implements OnInit {
@@ -15,6 +16,7 @@ export class InvoiceComponent implements OnInit {
   invoice!: Invoice;
   invoiceId!: string;
   currentDate = new Date();
+  logoUrl = 'assets/logo.png';
 
   constructor(
     private route: ActivatedRoute,

@@ -1,69 +1,203 @@
 
+<!-- RESPONSIVE -->
 <div class="flex flex-col items-center justify-center min-h-screen bg-[#F3F4F6] p-8">
-  <div id="invoice" class="w-full max-w-4xl bg-white shadow-lg rounded-lg p-8 border border-[#E5E7EB]">
+    <div class="w-full flex justify-center">
+        <div class="flex-col flex mx-2">
+            <button (click)="downloadInvoice()" class="hover:cursor-pointer w-12 h-12 bg-[#6366F1] text-white font-semibold rounded-full shadow-md hover:bg-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:ring-opacity-50">
+                C
+            </button>
+                <button (click)="downloadInvoice()" class="hover:cursor-pointer mt-6 w-12 h-12 bg-[#6366F1] text-white font-semibold rounded-full shadow-md hover:bg-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:ring-opacity-50">
+                E
+            </button>
+        </div>
+        <div id="invoice" class="w-full md:max-w-4xl bg-white shadow-lg rounded-lg p-8 border border-[#E5E7EB]">
+        <!-- Header -->
+        <div class="flex justify-between items-start mb-8">
+            <div class="flex">
+                <div class="">
+                    <img [src]="logoUrl" alt="Company Logo" class="h-24 w-24 object-contain" />
+                </div>
+                <div class="ml-4">
+                    <h2 class="text-xl font-bold">Business Name</h2>
+                    <p class="text-sm text-[#4B5563]">Street Address, Building, City</p>
+                    <p class="text-sm text-[#4B5563]">Postcode, State</p>
+                    <p class="text-sm text-[#4B5563]">Country</p>
+                </div>
+            </div>
+        <div class="text-right">
+            <p class="text-sm font-semibold">Invoice No</p>
+            <p class="text-sm text-[#4B5563] mb-2">#{{ invoice.invoice_no }}</p>
+            <p class="text-sm font-semibold">Issue Date</p>
+            <p class="text-sm text-[#4B5563]">{{ currentDate | date:'dd/MM/yyyy hh:mm a' }}</p>
+
+        </div>
+        </div>
+
+        <!-- Bill To -->
+        <div class="mb-8 border-y border-[#E5E7EB] py-4">
+        <h2 class="text-xl font-semibold text-[#1F2937] mb-2">BILL TO</h2>
+        <p class="text-sm text-[#374151]">{{ invoice.customer_name }}</p>
+        <p class="text-sm text-[#374151]">Email</p>
+        <p class="text-sm text-[#374151]">PhoneNumber</p>
+        <p class="text-sm text-[#374151] whitespace-pre-line">{{ invoice.customer_address }}</p>
+        </div>
+
+        <!-- Items Table -->
+        <div class="mb-2">
+        <table class="w-full border-collapse">
+            <thead>
+                <tr class="bg-[#EEF2FF] text-left text-sm font-semibold text-[#4F46E5]">
+                    <th class="p-3 border-b border-[#E0E7FF] w-[8%]">NO.</th>
+                    <th class="p-3 border-b border-[#E0E7FF] w-[50%]">ITEM</th>
+                    <th class="p-3 border-b border-[#E0E7FF] w-[12%]">QTY</th>
+                    <th class="p-3 border-b border-[#E0E7FF] w-[18%]">PRICE</th>
+                    <th class="p-3 border-b border-[#E0E7FF] w-[18%] text-right">AMOUNT</th>
+                </tr>
+            </thead>
+            <tbody>
+            @for (item of invoice.items; track $index) {
+                <tr class="text-left text-sm font-semibold align-text-top">
+                    <td class="p-3 border-b border-[#E0E7FF]">{{ $index+1 }}</td>
+                    <td class="p-3 border-b border-[#E0E7FF]">
+                        <p class="">{{ item.name | titlecase }}</p>
+                        <p class="font-light ml-4">Description: {{ item.description ? item.description : "None"}}</p>
+                    </td> 
+                    <td class="p-3 border-b border-[#E0E7FF] ">{{ item.quantity }}</td>
+                    <td class="p-3 border-b border-[#E0E7FF] ">{{ item.price_per_unit.toString() | currencySymbol:(item.currency) }}</td>
+                    <td class="p-3 border-b border-[#E0E7FF] text-right">{{ item.total_price.toString() |  currencySymbol:(item.currency) }}</td>
+                </tr>
+            }
+            </tbody>
+
+            <!-- SUMMARY -->
+            <tfoot>
+                <tr class="text-sm font-medium">
+                    <td colspan="4" class="px-3 py-3 text-left border-t border-[#E0E7FF] font-semibold">
+                        TOTAL AMOUNT
+                    </td>
+                    <td class="px-3 py-3 text-right border-t border-[#E0E7FF] font-bold text-[#111827]">
+                        {{ invoice.total_price | currencySymbol:(invoice.items[0]?.currency) }}
+                    </td>
+                </tr>
+            </tfoot>
+        </table>
+        </div>
+
+        <!-- Footer -->
+        <div class="text-right text-sm text-[#6B7280] border-t border-[#E5E7EB] pt-4">
+        <p>Issued By</p>
+        <div>
+            <p>Signature by base64</p>
+        </div>
+        <p>User Business Name</p>
+        </div>
+    <!-- </div> -->
+        <!-- <div>
+            <button (click)="downloadInvoice()" class="px-6 py-3 bg-[#6366F1] text-white font-semibold rounded-lg shadow-md hover:bg-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:ring-opacity-50">
+                Create New
+            </button>
+                <button (click)="downloadInvoice()" class="mt-4 px-6 py-3 bg-[#6366F1] text-white font-semibold rounded-lg shadow-md hover:bg-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:ring-opacity-50">
+                Edit Invoice
+            </button>
+        </div> -->
+        </div>
+    </div>
+
+  <!-- Download Button -->
+  <div class="">
+    <button (click)="downloadInvoice()" class="hover:cursor-pointer mt-6 px-6 py-3 bg-[#6366F1] text-white font-semibold rounded-lg shadow-md hover:bg-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:ring-opacity-50 w-full">
+        Download PDF
+    </button>
+  </div>
+
+
+    <!-- ------------------------------- -->
+    <!-- HIDDEN - FOR DOWNLOAD PURPOSES  -->
+    <!-- INVOICE WILL BE IN DESKTOP MODE -->
+    <!-- ------------------------------- -->
+    <div id="invoice-pdf" class="hidden w-4xl bg-white shadow-lg rounded-lg p-8 border border-[#E5E7EB]">
     <!-- Header -->
-    <div class="flex justify-between items-start mb-8">
-      <div>
-        <h1 class="text-3xl font-bold text-[#6366F1]">Invoice</h1>
-        <p class="text-sm text-[#4B5563]">Invoice No: {{ invoice.invoice_no }}</p>
-        <p class="text-sm text-[#4B5563]">Invoice ID: {{ invoice.invoice_id }}</p>
-      </div>
-      <div class="text-right">
-        <p class="text-sm text-[#4B5563]">Created By: {{ invoice.created_by }}</p>
-        <p class="text-sm text-[#4B5563]">Created At: {{ invoice.created_at | date:'medium' }}</p>
-        <p class="text-sm text-[#4B5563]">Updated At: {{ invoice.updated_at | date:'medium' }}</p>
-      </div>
+        <div class="flex justify-between items-start mb-8">
+        <div class="flex">
+            <div class="">
+                <img [src]="logoUrl" alt="Company Logo" class="h-24 w-24 object-contain" />
+            </div>
+            <div class="ml-4">
+                <h2 class="text-xl font-bold">Business Name</h2>
+                <p class="text-sm text-[#4B5563]">Street Address, Building, City</p>
+                <p class="text-sm text-[#4B5563]">Postcode, State</p>
+                <p class="text-sm text-[#4B5563]">Country</p>
+            </div>
+        </div>
+        <div class="text-right">
+            <p class="text-sm font-semibold">Invoice No</p>
+            <p class="text-sm text-[#4B5563] mb-2">#{{ invoice.invoice_no }}</p>
+            <p class="text-sm font-semibold">Issue Date</p>
+            <p class="text-sm text-[#4B5563]">{{ currentDate | date:'dd/MM/yyyy hh:mm a' }}</p>
+
+        </div>
     </div>
 
     <!-- Bill To -->
-    <div class="mb-8">
-      <h2 class="text-xl font-semibold text-[#1F2937] mb-2">Bill To:</h2>
+    <div class="mb-8 border-y border-[#E5E7EB] py-4">
+      <h2 class="text-xl font-semibold text-[#1F2937] mb-2">BILL TO</h2>
       <p class="text-sm text-[#374151]">{{ invoice.customer_name }}</p>
+      <p class="text-sm text-[#374151]">Email</p>
+      <p class="text-sm text-[#374151]">PhoneNumber</p>
       <p class="text-sm text-[#374151] whitespace-pre-line">{{ invoice.customer_address }}</p>
     </div>
 
     <!-- Items Table -->
-    <div class="mb-8">
-      <h2 class="text-xl font-semibold text-[#1F2937] mb-4">Items</h2>
+    <div class="mb-2">
       <table class="w-full border-collapse">
         <thead>
-          <tr class="bg-[#EEF2FF] text-left text-sm font-semibold text-[#4F46E5]">
-            <th class="p-3 border-b border-[#E0E7FF]">Description</th>
-            <th class="p-3 border-b border-[#E0E7FF]">Quantity</th>
-            <th class="p-3 border-b border-[#E0E7FF]">Price</th>
-            <th class="p-3 border-b border-[#E0E7FF]">Total</th>
-          </tr>
+            <tr class="bg-[#EEF2FF] text-left text-sm font-semibold text-[#4F46E5]">
+                <th class="p-3 border-b border-[#E0E7FF] w-[8%]">NO.</th>
+                <th class="p-3 border-b border-[#E0E7FF] w-[50%]">ITEM</th>
+                <th class="p-3 border-b border-[#E0E7FF] w-[12%]">QTY</th>
+                <th class="p-3 border-b border-[#E0E7FF] w-[18%]">PRICE</th>
+                <th class="p-3 border-b border-[#E0E7FF] w-[18%] text-right">AMOUNT</th>
+            </tr>
         </thead>
         <tbody>
-          <tr *ngIf="invoice.items.length === 0">
-            <td colspan="4" class="p-3 text-center text-[#4B5563] border-b border-[#E5E7EB]">No items listed</td>
-          </tr>
+          @for (item of invoice.items; track $index) {
+            <tr class="text-left text-sm font-semibold align-text-top">
+                <td class="p-3 border-b border-[#E0E7FF]">{{ $index+1 }}</td>
+                <td class="p-3 border-b border-[#E0E7FF]">
+                    <p class="">{{ item.name | titlecase }}</p>
+                    <p class="font-light ml-4">Description: {{ item.description ? item.description : "None"}}</p>
+                </td> 
+                <td class="p-3 border-b border-[#E0E7FF] ">{{ item.quantity }}</td>
+                <td class="p-3 border-b border-[#E0E7FF] ">{{ item.price_per_unit.toString() | currencySymbol:(item.currency) }}</td>
+                <td class="p-3 border-b border-[#E0E7FF] text-right">{{ item.total_price.toString() |  currencySymbol:(item.currency) }}</td>
+            </tr>
+          }
         </tbody>
+
+        <!-- SUMMARY -->
+        <tfoot>
+            <tr class="text-sm font-medium">
+                <td colspan="4" class="px-3 py-3 text-left border-t border-[#E0E7FF] font-semibold">
+                    TOTAL AMOUNT
+                </td>
+                <td class="px-3 py-3 text-right border-t border-[#E0E7FF] font-bold text-[#111827]">
+                    {{ invoice.total_price | currencySymbol:(invoice.items[0]?.currency) }}
+                </td>
+            </tr>
+        </tfoot>
       </table>
     </div>
 
     <!-- Additional Details -->
-    <div class="mb-8 grid grid-cols-2 gap-4">
-      <div>
-        <h2 class="text-xl font-semibold text-[#1F2937] mb-2">AI Usage Details</h2>
-        <p class="text-sm text-[#4B5563]">Model: {{ invoice.model }}</p>
-        <p class="text-sm text-[#4B5563]">Tokens: {{ invoice.token }}</p>
-      </div>
-      <div class="text-right">
-        <h2 class="text-xl font-semibold text-[#1F2937] mb-2">Summary</h2>
-        <p class="text-2xl font-bold text-[#6366F1]">${{ invoice.total_price }}</p>
-      </div>
-    </div>
 
     <!-- Footer -->
-    <div class="text-center text-xs text-[#6B7280] border-t border-[#E5E7EB] pt-4">
-      <p>Thank you for your business!</p>
-      <p>Generated on {{ currentDate | date:'medium' }}</p>
+    <div class="text-right text-sm text-[#6B7280] border-t border-[#E5E7EB] pt-4">
+      <p>Issued By</p>
+      <div>
+        <p>Signature by base64</p>
+      </div>
+      <p>User Business Name</p>
     </div>
-  </div>
-
-  <!-- Download Button -->
-  <button (click)="downloadInvoice()" class="mt-6 px-6 py-3 bg-[#6366F1] text-white font-semibold rounded-lg shadow-md hover:bg-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:ring-opacity-50">
-    Download Invoice as PDF
-  </button>
+    </div>
 </div>
+
