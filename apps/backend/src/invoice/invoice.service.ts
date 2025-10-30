@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, UpdateResult } from 'typeorm';
 import { Item } from './entities/item.entity';
 import { Invoice } from './entities/invoice.entity';
 import { InvoiceDto } from './dto/invoice.dto';
@@ -14,15 +14,6 @@ export class InvoiceService {
     private invoiceRepository: Repository<Invoice>
   ){}
 
-  // async createItem(invoiceDto: InvoiceDto): Promise<InvoiceDto> {
-  //   invoiceDto.items.map(item => {
-  //     item.invoice_id = invoiceDto.invoice_id;
-  //   })
-
-  //   await this.itemRepository.insert(invoiceDto.items);
-  //   return invoiceDto;
-  // }
-
   async saveInvoice(invoiceDto: InvoiceDto): Promise<InvoiceDto> {
     await this.invoiceRepository.insert(invoiceDto);
     invoiceDto.items.map(item => {
@@ -32,10 +23,6 @@ export class InvoiceService {
     return invoiceDto
   }
 
-  // findAll() {
-  //   return `This action returns all invoice`;
-  // }
-
   async findOne(id: string) {
     return await this.invoiceRepository.findOne({
       where: { invoice_id: id},
@@ -43,11 +30,16 @@ export class InvoiceService {
     })
   }
 
-  // update(id: number, updateInvoiceDto: UpdateInvoiceDto) {
-  //   return `This action updates a #${id} invoice`;
-  // }
-
-  // remove(id: number) {
-  //   return `This action removes a #${id} invoice`;
-  // }
+   updateInvoice(invoiceDto: InvoiceDto): boolean {
+    try {
+      this.invoiceRepository.update({ invoice_id: invoiceDto.invoice_id}, {
+        customer_name: invoiceDto.customer_name,
+        customer_address: invoiceDto.customer_address,
+        invoice_no: invoiceDto.invoice_no
+      })
+    } catch (err) {
+      console.error("Some error occured during updating invoice, ", err);
+    }
+    return true;
+  }
 }

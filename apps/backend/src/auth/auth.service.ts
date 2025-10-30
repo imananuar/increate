@@ -6,6 +6,8 @@ import * as bcrypt from 'bcryptjs';
 import { User } from './entities/user.entity';
 import { LoginDto } from './dto/login.dto';
 import { RegisterDto } from './dto/register.dto';
+import { UserDto } from 'src/user/dto/user.dto';
+import { AuthResponseDto } from './dto/auth.dto';
 
 @Injectable()
 export class AuthService {
@@ -29,10 +31,10 @@ export class AuthService {
 
     // Create user
     const user = this.userRepository.create({
-      email,
+      email: email,
       password: hashedPassword,
-      firstName,
-      lastName,
+      first_name: firstName,
+      last_name: lastName,
     });
 
     await this.userRepository.save(user);
@@ -44,7 +46,7 @@ export class AuthService {
     };
   }
 
-  async login(loginDto: LoginDto): Promise<{ access_token: string }> {
+  async login(loginDto: LoginDto): Promise<AuthResponseDto> {
     const { email, password } = loginDto;
 
     // Find user
@@ -61,15 +63,28 @@ export class AuthService {
 
     // Generate JWT token
     const payload = { email: user.email, sub: user.id };
+    // user.
     return {
       access_token: this.jwtService.sign(payload),
+      user: {
+        email: user.email,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        company_name: user.company_name,
+        company_street_addr: user.company_street_addr,
+        company_building_addr: user.company_building_addr,
+        company_postcode: user.company_postcode,
+        company_city: user.company_city,
+        company_state: user.company_state,
+        company_country: user.company_country
+      }
     };
   }
 
   async validateUser(email: string, password: string): Promise<any> {
     const user = await this.userRepository.findOne({ where: { email } });
     if (user && await bcrypt.compare(password, user.password)) {
-      const { password, ...result } = user;
+      const { password: _password, ...result } = user;
       return result;
     }
     return null;

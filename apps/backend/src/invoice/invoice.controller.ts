@@ -1,11 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Logger } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseInterceptors, UploadedFile, Logger, HttpException, HttpStatus, BadRequestException, InternalServerErrorException } from '@nestjs/common';
 import { InvoiceService } from './invoice.service';
 import { AIService } from 'src/ai/ai.service';
 import { ConfigService } from '@nestjs/config';
 import { CONST_AI_MODEL, CONST_AI_SYSTEM_ROLE, CONST_PROMPT } from 'src/constant/app.constants';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { randomUUID } from 'crypto';
-import { InvoiceDto } from './dto/invoice.dto';
+import { InvoiceDto, UpdateInvoiceReq } from './dto/invoice.dto';
+import { UserService } from 'src/user/user.service';
+import { UpdateResult } from 'typeorm';
 
 @Controller('api/invoice')
 
@@ -16,6 +18,7 @@ export class InvoiceController {
       private readonly invoiceService: InvoiceService,
       private readonly aiService: AIService,
       private readonly configService: ConfigService,
+      private readonly userService: UserService
     ) {}
 
   @Post('createFromAudio')
@@ -72,28 +75,16 @@ export class InvoiceController {
     return this.invoiceService.findOne(invoiceId);
   }
 
-  // @Post()
-  // create(@Body() createInvoiceDto: CreateInvoiceDto) {
-  //   return this.invoiceService.createItem(createInvoiceDto);
-  // }
+  @Post('updateInvoice')
+  async updateInvoice(@Body() reqBody: UpdateInvoiceReq) {
+    if (!reqBody.user || !reqBody.invoice) {
+      return new BadRequestException('Missing Data');
+    }
+    
+    if (this.userService.updateUser(reqBody.user) && this.invoiceService.updateInvoice(reqBody.invoice)) {
+      return { status: "success" }
+    }
 
-  // @Get()
-  // findAll() {
-  //   return this.invoiceService.findAll();
-  // }
-
-  // @Get(':id')
-  // findOne(@Param('id') id: string) {
-  //   return this.invoiceService.findOne(+id);
-  // }
-
-  // @Patch(':id')
-  // update(@Param('id') id: string, @Body() updateInvoiceDto: UpdateInvoiceDto) {
-  //   return this.invoiceService.update(+id, updateInvoiceDto);
-  // }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.invoiceService.remove(+id);
-  // }
+    return new InternalServerErrorException("Some error occured during updating invoice");
+  }
 }

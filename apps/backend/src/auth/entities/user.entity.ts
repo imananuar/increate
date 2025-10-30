@@ -12,14 +12,35 @@ export class User {
   password: string;
 
   @Column()
-  firstName: string;
+  first_name: string;
 
   @Column()
-  lastName: string;
+  last_name: string;
 
   @CreateDateColumn()
-  createdAt: Date;
+  created_at: Date;
 
   @UpdateDateColumn()
-  updatedAt: Date;
+  updated_at: Date;
+
+  @Column()
+  company_name: string;
+
+  @Column()
+  company_street_addr: string;
+
+  @Column()
+  company_building_addr: string;
+
+  @Column()
+  company_postcode: number;
+
+  @Column()
+  company_city: string;
+
+  @Column()
+  company_state: string;
+
+  @Column()
+  company_country: string;
 }

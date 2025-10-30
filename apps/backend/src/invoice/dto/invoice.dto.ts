@@ -1,5 +1,6 @@
 import { IsDate, IsNumber, IsString } from "class-validator";
 import { ItemDto } from "./item.dto";
+import { UserDto } from "src/user/dto/user.dto";
 
 export class InvoiceDto {
     
@@ -28,4 +29,9 @@ export class InvoiceDto {
     model: string;
     
     items: ItemDto[];
+}
+
+export class UpdateInvoiceReq {
+    user: UserDto
+    invoice: InvoiceDto
 }

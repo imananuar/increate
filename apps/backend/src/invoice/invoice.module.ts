@@ -5,14 +5,16 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AIModule } from 'src/ai/ai.module';
 import { Item } from './entities/item.entity';
 import { Invoice } from './entities/invoice.entity';
+import { UserService } from 'src/user/user.service';
+import { User } from 'src/auth/entities/user.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([Item, Invoice]),
+    TypeOrmModule.forFeature([Item, Invoice, User]),
     AIModule
   ],
   controllers: [InvoiceController],
-  providers: [InvoiceService],
+  providers: [InvoiceService, UserService],
   exports: [InvoiceService]
 })
 export class InvoiceModule {}
