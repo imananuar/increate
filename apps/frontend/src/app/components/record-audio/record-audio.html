@@ -1,4 +1,4 @@
-<div class="p-4 text-center">
+<!-- <div class="p-4 text-center">
   <h2>🎙️ Record Audio</h2>
 
   <button (click)="startRecording()" [disabled]="isRecording"  class="btn btn-primary m-2">
@@ -25,4 +25,143 @@
   }
 
 }
-</div>
+</div> -->
+
+    <div class="min-h-screen bg-gradient-to-br from-slate-900 via-purple-900 to-slate-900 flex items-center justify-center p-6">
+      <div class="w-full max-w-lg">
+        <div class="bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl border border-white/20 p-8">
+          <!-- Header -->
+          <div class="text-center mb-8">
+            <h1 class="text-3xl font-bold text-white mb-2">Voice Recorder</h1>
+            <p class="text-purple-200">Capture your audio message</p>
+          </div>
+
+          <!-- Waveform Visualization -->
+          <div class="relative mb-8 h-48 bg-black/20 rounded-2xl border border-white/10 overflow-hidden">
+            <div class="absolute inset-0 flex items-center justify-center gap-1 px-4">
+              @for (value of waveformData; track $index) {
+                <div
+                  class="flex-1 bg-gradient-to-t from-purple-500 to-pink-500 rounded-full transition-all duration-75"
+                  [style.height.%]="isRecording ? Math.max(20, value * 100) : 20"
+                  [style.opacity]="isRecording ? 0.8 + value * 0.2 : 0.3"
+                ></div>
+              }
+            </div>
+
+            <!-- Recording Time -->
+             @if (isRecording) {
+               <div class="absolute top-4 right-4 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-mono flex items-center gap-2">
+                 <span class="w-2 h-2 bg-white rounded-full animate-pulse"></span>
+                 {{ formatTime(recordingTime) }}
+               </div>
+             }
+
+            <!-- Center Icon -->
+             @if (isRecording && !audioBlob) {
+               <div class="absolute inset-0 flex items-center justify-center">
+                 <div class="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center">
+                   <svg class="w-10 h-10 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                   </svg>
+                 </div>
+               </div>
+             }
+          </div>
+
+          <!-- Controls -->
+          <div class="space-y-4">
+            <!-- Start Recording Button -->
+             @if (!isRecording && !audioBlob) {
+               <button
+                 (click)="startRecording()"
+                 class="w-full bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
+               >
+                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                   <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z" />
+                 </svg>
+                 Start Recording
+               </button>
+             }
+
+            <!-- Stop Recording Button -->
+             @if (isRecording) {
+               <button
+                 (click)="stopRecording()"
+                 class="w-full bg-red-500 hover:bg-red-600 text-white font-semibold py-4 px-6 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-3"
+               >
+                 <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24">
+                   <rect x="6" y="6" width="12" height="12" />
+                 </svg>
+                 Stop Recording
+               </button>
+             }
+
+            <!-- Playback and Submit Controls -->
+             @if (audioBlob && !isRecording) {
+               <div class="space-y-3">
+                 <div class="bg-white/5 rounded-xl p-4 border border-white/10">
+                   <div class="flex items-center justify-between mb-2">
+                     <span class="text-white text-sm font-medium">Recording ready</span>
+                     <span class="text-purple-300 text-sm">{{ formatTime(recordingTime) }}</span>
+                   </div>
+                   <button
+                     (click)="togglePlayback()"
+                     class="w-full bg-white/10 hover:bg-white/20 text-white font-medium py-3 px-4 rounded-lg transition-all duration-200 flex items-center justify-center gap-2"
+                   >
+                    @if (!isPlaying) {
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                       <path d="M8 5v14l11-7z"/>
+                     </svg>
+                    } @else {
+                      <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M6 4h4v16H6V4zm8 0h4v16h-4V4z"/>
+                      </svg>
+                    }
+                     {{ isPlaying ? 'Pause' : 'Play Recording' }}
+                   </button>
+                 </div>
+   
+                 <div class="flex gap-3">
+                   <button
+                     (click)="startRecording()"
+                     class="flex-1 bg-white/10 hover:bg-white/20 text-white font-medium py-3 px-4 rounded-xl transition-all duration-200 border border-white/20"
+                   >
+                     Record Again
+                   </button>
+                   <button
+                     (click)="handleSubmit()"
+                     [disabled]="isSubmitting || isSuccess"
+                     class="flex-1 bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 disabled:from-gray-500 disabled:to-gray-600 text-white font-semibold py-3 px-4 rounded-xl transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center gap-2"
+                   >
+                      @if (isSuccess) {
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                        </svg>
+                      }
+
+                      @if (isSubmitting) {
+                        <div class="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      } @else {
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                        </svg>
+                      }
+                     {{ isSuccess ? 'Success!' : isSubmitting ? 'Submitting...' : 'Submit' }}
+                   </button>
+                 </div>
+               </div>
+             }
+          </div>
+
+          <!-- Hidden Audio Player -->
+          @if (audioUrl) {
+            <audio
+              #audioPlayer
+              [src]="audioUrl"
+              (ended)="onAudioEnded()"
+              class="hidden"
+            ></audio>
+          }
+        </div>
+      </div>
+    </div>
