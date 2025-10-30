@@ -99,9 +99,9 @@
             <!-- Footer -->
             <div class="text-right text-xs md:text-sm text-[#6B7280] border-t border-[#E5E7EB] pt-4">
                 <p>Issued By</p>
-                <div>
+                <!-- <div>
                     <p>Signature by base64</p>
-                </div>
+                </div> -->
                 <p>{{ userForm.get('first_name')?.value }} {{ userForm.get('last_name')?.value }}</p>
             </div>
         </div>
@@ -126,13 +126,14 @@
                 @if (activeTab === "profile" ) {
                     @if ( !accessToken ) {
                         <button (click)="isLogin = !isLogin"
-                            class="text-sm hover:cursor-pointer mt-2 px-6 py-3 bg-linear-to-r from-[#A5B4FC] to-[#C7D2FE] text-[#1F2937]  font-semibold rounded-lg shadow-md hover:bg-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:ring-opacity-50">
+                            class="text-sm hover:cursor-pointer my-4 px-6 py-3 bg-linear-to-r from-[#A5B4FC] to-[#C7D2FE] text-[#1F2937]  font-semibold rounded-lg shadow-md hover:bg-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:ring-opacity-50">
                             Login / Register
                         </button>
-                    } @else {
-                        <form [formGroup]="userForm" (ngSubmit)="saveEditedInvoice()">
+                    }
+                    <div class="border-t border-[#E0E7FF] my-4 "></div>
+                    <form [formGroup]="userForm" (ngSubmit)="saveEditedInvoice()">
                         <div class="mb-4">
-                            <label for="first_name" class="m-1 text-[#6B7280] ">First Name</label>
+                            <label for="first_name" class=" m-1 text-[#6B7280] ">First Name</label>
                             <input type="text" placeholder="First Name" formControlName="first_name"
                                 [value]="invoiceForm.get('first_name')?.value"
                                 class="w-full border p-2 mt-1 rounded-lg focus:outline-none focus:ring-indigo-500 focus:z-10 focus:ring-2 border-gray-600 placeholder:text-gray-400" />
@@ -192,13 +193,15 @@
                                 [value]="invoiceForm.get('company_country')?.value"
                                 class="w-full border p-2 mt-1 rounded-lg focus:outline-none focus:ring-indigo-500 focus:z-10 focus:ring-2 border-gray-600 placeholder:text-gray-400" />
                         </div>
-                        <div class="w-9/12 md:w-1/4 pt-8 mx-auto">
-                            <button type="submit" class="text-sm hover:cursor-pointer mx-2 px-6 py-3 w-full bg-linear-to-r from-[#6366F1] to-[#818CF8] text-white font-semibold rounded-lg shadow-md hover:bg-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:ring-opacity-50">
-                                Save Invoice
-                            </button>
-                        </div>
+                        @if(isLogin) {
+                            <div class="w-9/12 md:w-1/4 pt-8 mx-auto">
+                                <button type="submit" class="text-sm hover:cursor-pointer mx-2 px-6 py-3 w-full bg-linear-to-r from-[#6366F1] to-[#818CF8] text-white font-semibold rounded-lg shadow-md hover:bg-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:ring-opacity-50">
+                                    Save Invoice
+                                </button>
+                            </div>
+                        }
                     </form>
-                    }
+                    
                 } @else {
                     <form [formGroup]="invoiceForm" (ngSubmit)="saveEditedInvoice()">
                     <div class="mb-4">
@@ -222,9 +225,11 @@
                         </div>
                         <div class="w-9/12 md:w-1/4 pt-8 mx-auto">
 
-                            <button type="submit" class="text-sm hover:cursor-pointer mx-2 px-6 py-3 w-full bg-linear-to-r from-[#6366F1] to-[#818CF8] text-white font-semibold rounded-lg shadow-md hover:bg-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:ring-opacity-50">
-                                Save Invoice
-                            </button>
+                            @if (isLogin) {
+                                <button type="submit" class="text-sm hover:cursor-pointer mx-2 px-6 py-3 w-full bg-linear-to-r from-[#6366F1] to-[#818CF8] text-white font-semibold rounded-lg shadow-md hover:bg-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:ring-opacity-50">
+                                    Save Invoice
+                                </button>
+                            }
                         </div>
                     </form>
                 }
@@ -237,25 +242,25 @@
         </div>
         }
     <!-- Download Button -->
-    @if (!isEdit) {
-        <div class="w-11/12 md:w-1/4 pt-8">
-            <div class="flex">
-                <button routerLink="/record"
-                    class="text-sm hover:cursor-pointer mx-2 px-6 py-3 w-full bg-linear-to-r from-[#6366F1] to-[#818CF8] text-white font-semibold rounded-lg shadow-md hover:bg-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:ring-opacity-50">
-                    Create New
-                </button>
-                
+    <div class="w-11/12 md:w-1/4 pt-8">
+        <div class="flex">
+            <button routerLink="/record"
+                class="text-sm hover:cursor-pointer mx-2 px-6 py-3 w-full bg-linear-to-r from-[#6366F1] to-[#818CF8] text-white font-semibold rounded-lg shadow-md hover:bg-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:ring-opacity-50">
+                Create New
+            </button>
+        
+            @if (!isEdit) {
                 <button (click)="isEdit = true"
                     class="text-sm hover:cursor-pointer mx-2 px-6 py-3 w-full bg-linear-to-r from-[#6366F1] to-[#818CF8] text-white font-semibold rounded-lg shadow-md hover:bg-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:ring-opacity-50">
                     Edit Invoice
                 </button>
+            }
             </div>
             <button (click)="downloadInvoice()"
                 class="text-sm hover:cursor-pointer mt-6 px-6 py-3 bg-linear-to-r from-[#A5B4FC] to-[#C7D2FE] text-[#1F2937]  font-semibold rounded-lg shadow-md hover:bg-[#4F46E5] focus:outline-none focus:ring-2 focus:ring-[#6366F1] focus:ring-opacity-50 w-full">
                 Download PDF
             </button>
         </div>
-    }
 
 
     <!-- ------------------------------- -->
@@ -267,10 +272,10 @@
         <!-- Header -->
         <div class="flex justify-between items-start mb-8">
             <div class="flex">
-                <div class="">
+                <!-- <div class="mr-4">
                     <img [src]="logoUrl" alt="Company Logo" class="h-24 w-24 object-contain" />
-                </div>
-                <div class="ml-4">
+                </div> -->
+                <div class="">
                     <h2 class="text-xl font-bold tracking-wider">
                         {{ userForm.get('company_name')?.value ? userForm.get('company_name')?.value : "Company Name" }}
                     </h2>
@@ -361,9 +366,9 @@
         <!-- Footer -->
         <div class="text-right text-sm text-[#6B7280] border-t border-[#E5E7EB] pt-4">
             <p>Issued By</p>
-            <div>
+            <!-- <div>
                 <p>Signature by base64</p>
-            </div>
+            </div> -->
             <p>{{ userForm.get('first_name')?.value }} {{ userForm.get('last_name')?.value }}</p>
         </div>
     </div>

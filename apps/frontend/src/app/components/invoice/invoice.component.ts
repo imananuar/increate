@@ -21,12 +21,14 @@ export class InvoiceComponent implements OnInit {
   invoiceId!: string;
   activeTab: string = 'profile';
   currentDate = new Date();
-  logoUrl = 'assets/logo.png';
+  // logoUrl = 'assets/logo.png';
   isEdit: boolean = false;
   isLogin: boolean = false;
+  contAsAnon: boolean = false;
   accessToken: string | null = "";
   invoiceForm: FormGroup;
   userForm: FormGroup;
+  
 
   constructor(
     private route: ActivatedRoute,
@@ -35,8 +37,27 @@ export class InvoiceComponent implements OnInit {
     private fb: FormBuilder,
     private ngZone: NgZone
   ) {
-    this.invoiceForm = this.fb.group({});
-    this.userForm = this.fb.group({})
+
+    this.invoiceForm = this.fb.group({
+      invoice_id: this.invoiceId,
+      invoice_no: "",
+      customer_name: "",
+      customer_addr: ""
+    });
+
+    this.userForm = this.fb.group({
+      email: "",
+      first_name: "",
+      last_name: "",
+      company_name: "",
+      company_street_addr: "",
+      company_building_addr: "",
+      company_postcode: "",
+      company_city: "",
+      company_state: "",
+      company_country: "",
+    });
+
   }
 
   ngOnInit(): void {
@@ -57,11 +78,12 @@ export class InvoiceComponent implements OnInit {
       });
     }
     
+    
     // Fill-in Invoice Form
-    this.invoiceForm.addControl('invoice_id', this.fb.control(this.invoiceId));
-    this.invoiceForm.addControl('invoice_no', this.fb.control(this.invoice.invoice_no));
-    this.invoiceForm.addControl('customer_name', this.fb.control(this.invoice.customer_name));
-    this.invoiceForm.addControl('customer_addr', this.fb.control(this.invoice.customer_address));
+    this.invoiceForm.setControl('invoice_id', this.fb.control(this.invoiceId));
+    this.invoiceForm.setControl('invoice_no', this.fb.control(this.invoice.invoice_no));
+    this.invoiceForm.setControl('customer_name', this.fb.control(this.invoice.customer_name));
+    this.invoiceForm.setControl('customer_addr', this.fb.control(this.invoice.customer_address));
 
     const itemsArr: FormArray = this.fb.array([]);
     this.invoice.items.forEach(item => {
@@ -84,16 +106,16 @@ export class InvoiceComponent implements OnInit {
     if (this.accessToken && !userDetails) {
       const currentUser = this.userService.getCurrentUser(this.accessToken).subscribe({
         next: (user: User) => {
-          this.userForm.addControl('email', this.fb.control(user.email));
-          this.userForm.addControl('first_name', this.fb.control(user.first_name));
-          this.userForm.addControl('last_name', this.fb.control(user.last_name));
-          this.userForm.addControl('company_name', this.fb.control(user.company_name));
-          this.userForm.addControl('company_street_addr', this.fb.control(user.company_street_addr));
-          this.userForm.addControl('company_building_addr', this.fb.control(user.company_building_addr));
-          this.userForm.addControl('company_postcode', this.fb.control(user.company_postcode));
-          this.userForm.addControl('company_city', this.fb.control(user.company_city));
-          this.userForm.addControl('company_state', this.fb.control(user.company_state));
-          this.userForm.addControl('company_country', this.fb.control(user.company_country));
+          this.userForm.setControl('email', this.fb.control(user.email));
+          this.userForm.setControl('first_name', this.fb.control(user.first_name));
+          this.userForm.setControl('last_name', this.fb.control(user.last_name));
+          this.userForm.setControl('company_name', this.fb.control(user.company_name));
+          this.userForm.setControl('company_street_addr', this.fb.control(user.company_street_addr));
+          this.userForm.setControl('company_building_addr', this.fb.control(user.company_building_addr));
+          this.userForm.setControl('company_postcode', this.fb.control(user.company_postcode));
+          this.userForm.setControl('company_city', this.fb.control(user.company_city));
+          this.userForm.setControl('company_state', this.fb.control(user.company_state));
+          this.userForm.setControl('company_country', this.fb.control(user.company_country));
         },
         error: (err) => {
           if (err.error.message.toLowerCase() === "token expired" ) {
@@ -119,6 +141,10 @@ export class InvoiceComponent implements OnInit {
     this.invoiceService.downloadInvoice(this.invoice);
   }
 
+  continueAsAnon() {
+
+  }
+
   handleLoginSuccess(user: User) {
     this.ngZone.run(() => {
       console.log("Rerendering")
@@ -137,5 +163,4 @@ export class InvoiceComponent implements OnInit {
       this.accessToken = localStorage.getItem("access_token");
     })
   }
-
 }
