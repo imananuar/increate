@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
 import { environment } from '../../environments/environment';
 import { AuthResponse, LoginRequest, RegisterRequest } from '../model/auth.model';
+import { HttpExceptionResponse } from '../model/common.model';
 
 @Injectable({
   providedIn: 'root'
@@ -20,6 +21,7 @@ export class AuthService {
       .pipe(
         tap(response => {
           this.setToken(response.access_token);
+          localStorage.setItem('access_token', response.access_token);
         })
       );
   }

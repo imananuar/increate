@@ -1,7 +1,7 @@
 import { HttpClient } from "@angular/common/http";
 import { ElementRef, Injectable } from "@angular/core";
 import { BehaviorSubject, Observable, tap } from "rxjs";
-import { Invoice } from "../model/invoice.model";
+import { Invoice, UpdateInvoiceRequest } from "../model/invoice.model";
 import { environment } from "../../environments/environment";
 import html2canvas from "html2canvas";
 import jsPDF from "jspdf";
@@ -10,22 +10,21 @@ import jsPDF from "jspdf";
     providedIn: 'root'
 })
 export class InvoiceService {
+
+  API_URL: string = `${environment.apiUrl}/invoice`;
     constructor(
         private http: HttpClient
     ) {}
+  getInvoiceById(invoiceId: string): Observable<Invoice> {
+      return this.http.get<Invoice>(`${this.API_URL}/getInvoiceById/${invoiceId}`);
+  }
 
-    getInvoiceById(invoiceId: string): Observable<Invoice> {
-        return this.http.get<Invoice>(`${environment.apiUrl}/invoice/getInvoiceById/${invoiceId}`);
-    }
-    
   downloadInvoice(invoice: Invoice) {
     const element = document.getElementById('invoice-pdf'); // Use hidden desktop-styled invoice
     if (!element) {
       console.error('Invoice PDF element not found');
       return;
     }
-
-    console.log(element);
     element.style.display = 'inline';
     element.style.position = 'fixed';
     element.style.left = '0';
@@ -50,19 +49,25 @@ export class InvoiceService {
         pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
         pdf.save(`invoice_${invoice.invoice_no}.pdf`);
 
-        // Clean up
-        // element.style.visibility = 'hidden';
-        // element.style.position = 'absolute';
-        // element.style.left = '-9999px';
-        // element.style.zIndex = '0';
+        element.style.display = "none"
+
       }).catch(error => {
         console.error('Error generating PDF:', error);
-        // element.style.visibility = 'hidden';
-        // element.style.position = 'absolute';
-        // element.style.left = '-9999px';
-        // element.style.zIndex = '0';
       });
     }
+  }
+
+  updateInvoice(reqBody: UpdateInvoiceRequest) {
+    return this.http.post<any>(`${this.API_URL}/updateInvoice`, reqBody).subscribe({
+      next: (res => {
+        if (res.message) {
+          console.log(res);
+        }
+      }),
+      error: (err => {
+        console.error(err);
+      })
+    });
   }
 
 }

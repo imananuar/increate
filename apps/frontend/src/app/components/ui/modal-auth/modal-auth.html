@@ -1,0 +1,54 @@
+<!-- Backdrop -->
+@if(isOpen) {
+<div class="fixed inset-0 h-screen flex items-center justify-center bg-black/50 backdrop-blur-sm z-50">
+    <!-- Modal container -->
+    <div class="bg-white rounded-2xl shadow-xl w-11/12 sm:w-96 p-6 relative">
+        <!-- Close button -->
+        <button (click)="isOpen = !isOpen" class="absolute top-3 right-3 text-gray-400 hover:text-gray-600">
+            ✕
+        </button>
+
+        <!-- Tabs -->
+        <div class="flex justify-around mb-4 ">
+            <button class="pb-2 text-sm font-medium" [class.text-blue-600]="activeTab === 'login'"
+                [class.border-b-2]="activeTab === 'login'" (click)="activeTab = 'login'">
+                Login
+            </button>
+            <button class="pb-2 text-sm font-medium" [class.text-blue-600]="activeTab === 'register'"
+                [class.border-b-2]="activeTab === 'register'" (click)="activeTab = 'register'">
+                Register
+            </button>
+        </div>
+
+        @if(errorMessage) {
+            <p>{{ errorMessage }}</p>
+        }
+        
+        <!-- Login form -->
+        @if(activeTab === 'login') {
+        <form class="space-y-4" [formGroup]="loginForm" (ngSubmit)="login()">
+            <input type="email" placeholder="Email" required name="email" formControlName="email"
+                class="w-full border p-2 rounded-lg focus:outline-none focus:ring-indigo-500 focus:z-10 focus:ring-2 border-gray-600 placeholder:text-gray-400" />
+            <input type="password" placeholder="Password" required formControlName="password"
+                class="w-full border p-2 rounded-lg focus:outline-none focus:ring-indigo-500 focus:z-10 focus:ring-2 border-gray-600 placeholder:text-gray-400" />
+            <button type="submit" class="w-full py-2 rounded-lg bg-linear-to-r from-[#6366F1] to-[#818CF8] text-white">
+                Login
+            </button>
+        </form>
+        } @else if (activeTab === 'register') {
+        <!-- Register form -->
+        <form class="space-y-4" (ngSubmit)="register()">
+            <input type="text" placeholder="Name"
+                class="w-full border p-2 rounded-lg focus:outline-none focus:ring-indigo-500 focus:z-10 focus:ring-2 border-gray-600 placeholder:text-gray-400" />
+            <input type="email" placeholder="Email"
+                class="w-full border p-2 rounded-lg focus:outline-none focus:ring-indigo-500 focus:z-10 focus:ring-2 border-gray-600 placeholder:text-gray-400" />
+            <input type="password" placeholder="Password"
+                class="w-full border p-2 rounded-lg focus:outline-none focus:ring-indigo-500 focus:z-10 focus:ring-2 border-gray-600 placeholder:text-gray-400" />
+            <button type="submit" class="w-full py-2 rounded-lg bg-linear-to-r from-[#6366F1] to-[#818CF8] text-white">
+                Register
+            </button>
+        </form>
+        }
+    </div>
+</div>
+}
