@@ -3,6 +3,7 @@ import { Component, ElementRef, NgZone, OnDestroy, OnInit, ViewChild } from '@an
 import { LoadingComponent } from '../loading/loading.component';
 import { Invoice } from '../../model/invoice.model';
 import { Router } from '@angular/router';
+import { InvoiceService } from '../../services/invoice.service';
 
 @Component({
   selector: 'app-record-audio',
@@ -112,7 +113,8 @@ export class RecordAudioComponent implements OnDestroy {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private ngZone: NgZone
+    private ngZone: NgZone,
+    private invoiceService: InvoiceService
   ) {}
 
   ngOnDestroy(): void {
@@ -260,24 +262,33 @@ export class RecordAudioComponent implements OnDestroy {
 
   async handleSubmit(): Promise<void> {
     if (!this.audioBlob) return;
-
     this.isSubmitting = true;
-    
     try {
       const formData = new FormData();
       formData.append('audio', this.audioBlob, 'recording.webm');
 
-      await this.http.post('/api/your-endpoint', formData).toPromise();
+      this.invoiceService.createInvoiceByVoice(formData).subscribe({
+        next: (res => {
+          if (res) {
+            this.isSuccess = true;
+            console.log(`[InvoiceId ${res.invoice_id}] - Moving to invoice page`);
+            localStorage.setItem(`invoice`, JSON.stringify(res));
+            this.router.navigate(['/invoice', res.invoice_id]);
+          } else {
+            console.log("Is it here");
+            this.isSubmitting = false;
+            alert("Test. Its fail");
+          }
+        }),
 
-      this.isSuccess = true;
-      setTimeout(() => {
-        this.router.navigate(['/next-page']);
-      }, 1000);
+        error: (err => {
+          console.error('Error sini, ', err);
+        })
+      })
+
     } catch (error) {
-      console.error('Error submitting audio:', error);
-      alert('Failed to submit audio. Please try again.');
-    } finally {
-      this.isSubmitting = false;
+      console.error("Error during creating invoice");
+
     }
   }
 

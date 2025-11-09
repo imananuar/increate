@@ -7,10 +7,10 @@ import { InvoiceComponent } from './components/invoice/invoice.component';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  { path: 'register', component: RegisterComponent },
+  // { path: 'login', component: LoginComponent },
+  // { path: 'register', component: RegisterComponent },
   { path: 'dashboard', component: DashboardComponent },
   { path: 'record', component: RecordAudioComponent },
   { path: 'invoice/:id', component: InvoiceComponent} ,
-  { path: '**', redirectTo: '/login' }
+  { path: '**', redirectTo: '/record' }
 ];

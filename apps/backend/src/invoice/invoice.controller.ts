@@ -32,6 +32,12 @@ export class InvoiceController {
 
     this.logger.log(`[InvoiceId ${invoiceId}] - Creating Invoice. Working hard! Environment: ${env}`);
     const transcription = await this.aiService.getWhisperTranscription(file.buffer);
+    console.log(`Transcription is: ${transcription}`);
+
+    if (!transcription) {
+      this.logger.error(`Transcription is empty! Whispr may not transcripting it. Please check if whisper-chan is alive or not`);
+      return {};
+    }
     const prompt = `${CONST_PROMPT.CREATE_INVOICE_JSON} ${transcription}`
 
     if (env === "staging") {

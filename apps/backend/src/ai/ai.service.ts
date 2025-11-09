@@ -108,7 +108,7 @@ export class AIService {
 
   async getWhisperTranscription(buffer: Buffer): Promise<string> {
     // const tmpDir = path.join(path.dirname, 'whisper-audio');
-    const tmpDir = path.resolve(__dirname, '../../transcription');
+    const tmpDir = path.resolve(__dirname, '/media/transcription');
     if (!fs.existsSync(tmpDir)) fs.mkdirSync(tmpDir, { recursive: true });
 
     const webmPath = path.join(tmpDir, `temp-${Date.now()}.webm`);
@@ -121,16 +121,19 @@ export class AIService {
     try {
       // Convert WebM → WAV
       await execPromise(`ffmpeg -y -i "${webmPath}" -ar 16000 -ac 1 -c:a pcm_s16le "${wavPath}"`);
-
+      console.log(`Hey it works: ${wavPath}`);
       // Run Whisper on the WAV file
       await execPromise(`whisper "${wavPath}" --model turbo --output_format txt --output_dir transcription`);
 
       // Read the transcription result
       const transcription = fs.existsSync(txtPath)
         ? fs.readFileSync(txtPath, 'utf8')
-        : 'No transcription output found.';
+        : '';
 
       return transcription.trim();
+    } catch (err) {
+      console.error("There are some error occured, ", err);
+      return "";
     } finally {
       // Cleanup temp files
       [webmPath, wavPath, txtPath].forEach((f) => {

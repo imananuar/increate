@@ -19,6 +19,10 @@ export class InvoiceService {
       return this.http.get<Invoice>(`${this.API_URL}/getInvoiceById/${invoiceId}`);
   }
 
+  createInvoiceByVoice(formData: FormData): Observable<Invoice> {
+    return this.http.post<Invoice>(`${this.API_URL}/createFromAudio`, formData);
+  }
+
   downloadInvoice(invoice: Invoice) {
     const element = document.getElementById('invoice-pdf'); // Use hidden desktop-styled invoice
     if (!element) {
