@@ -38,6 +38,7 @@ export class InvoiceController {
       this.logger.error(`Transcription is empty! Whispr may not transcripting it. Please check if whisper-chan is alive or not`);
       return {};
     }
+    
     const prompt = `${CONST_PROMPT.CREATE_INVOICE_JSON} ${transcription}`
 
     if (env === "staging") {

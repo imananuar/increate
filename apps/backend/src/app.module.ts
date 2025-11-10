@@ -8,10 +8,11 @@ import { InvoiceModule } from './invoice/invoice.module';
 import { UserModule } from './user/user.module';
 import { FfmpegService } from './ffmpeg/ffmpeg.service';
 import { HttpModule } from '@nestjs/axios';
+import { WhisperService } from './whisper/whisper.service';
 
 @Module({
   imports: [DatabaseModule, AuthModule, AIModule, InvoiceModule, UserModule, HttpModule],
   controllers: [AppController],
-  providers: [AppService, FfmpegService],
+  providers: [AppService, FfmpegService, WhisperService],
 })
 export class AppModule {}

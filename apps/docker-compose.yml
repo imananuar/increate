@@ -34,6 +34,14 @@ services:
       dockerfile: Dockerfile.ffmpeg
     container_name: ffmpeg
     restart: always
+    deploy:
+      resources:
+        reservations:
+          cpus: '4'        # Reserve 4 CPU cores
+          memory: 4G       # Reserve 4GB RAM
+        limits:
+          cpus: '6'        # Max 6 cores (prevents system overload)
+          memory: 8G       # Max 8GB RAM
     volumes:
       - ./media:/media  # Shared volume for file access
     networks:
@@ -43,7 +51,7 @@ services:
     build:
       context: ./whisper
       dockerfile: Dockerfile.whisper
-    container_name: whisper-openai
+    container_name: whisper
     restart: always
     volumes:
       - ./media:/media  # Shared volume for file access

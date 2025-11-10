@@ -8,8 +8,9 @@ import * as path from 'path';
 import { CONST_AI_MODEL } from 'src/constant/app.constants';
 import { InvoiceDto } from 'src/invoice/dto/invoice.dto';
 import { FfmpegService } from 'src/ffmpeg/ffmpeg.service';
+import { WhisperService } from 'src/whisper/whisper.service';
 
-const execPromise = promisify(exec);
+// const execPromise = promisify(exec);
 
 @Injectable()
 export class AIService {
@@ -18,7 +19,8 @@ export class AIService {
 
   constructor(
     private configService: ConfigService,
-    private ffmpegService: FfmpegService
+    private ffmpegService: FfmpegService,
+    private whisperService: WhisperService
   
   ) {
     this.openai = new OpenAI({
@@ -126,28 +128,29 @@ export class AIService {
     try {
       // Convert WebM → WAV
       // await execPromise(`ffmpeg -y -i "${webmPath}" -ar 16000 -ac 1 -c:a pcm_s16le "${wavPath}"`);
-      const ffmpegRes = await this.ffmpegService.convertAudioToWav(webmPath, wavPath);
-      console.log("FFMPEG RESSSSSS");
-      console.log(ffmpegRes);
-      
-      console.log(`Hey it works: ${wavPath}`);
+      const ffmpegOutputDir = await this.ffmpegService.convertAudioToWav(webmPath, wavPath);
+
       // Run Whisper on the WAV file
-      await execPromise(`whisper "${wavPath}" --model turbo --output_format txt --output_dir transcription`);
+      // await execPromise(`whisper "${wavPath}" --model turbo --output_format txt --output_dir transcription`);
+      const whisperRes = await this.whisperService.transcribe(ffmpegOutputDir);
+      console.log(`Typeof whisperRes: ${typeof(whisperRes)}`);
+      console.log(`WhisperRes: ${whisperRes.text}`)
 
-      // Read the transcription result
-      const transcription = fs.existsSync(txtPath)
-        ? fs.readFileSync(txtPath, 'utf8')
-        : '';
+      if (whisperRes.success) {
+        console.log("are you coming here boy?")
+        return whisperRes.text.trim();
+      }
+      return "";
 
-      return transcription.trim();
     } catch (err) {
       console.error("There are some error occured, ", err);
       return "";
+
     } finally {
       // Cleanup temp files
-      [webmPath, wavPath, txtPath].forEach((f) => {
-        if (fs.existsSync(f)) fs.unlinkSync(f);
-      });
+      // [webmPath, wavPath, txtPath].forEach((f) => {
+      //   if (fs.existsSync(f)) fs.unlinkSync(f);
+      // });
     }
   }
 

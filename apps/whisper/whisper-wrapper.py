@@ -6,7 +6,7 @@ import torch
 app = Flask(__name__)
 
 # Load model on startup (adjust size based on your GPU memory)
-MODEL_NAME = os.getenv('WHISPER_MODEL', 'base')
+MODEL_NAME = os.getenv('WHISPER_MODEL', 'medium')
 model = whisper.load_model(MODEL_NAME)
 
 @app.route('/transcribe', methods=['POST'])

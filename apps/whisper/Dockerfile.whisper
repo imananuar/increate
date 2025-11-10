@@ -12,7 +12,7 @@ RUN pip install --no-cache-dir -r requirements-whisper.txt
 
 COPY whisper-wrapper.py .
 
-ENV WHISPER_MODEL=base
-RUN python -c "import whisper; whisper.load_model('base')"
+ENV WHISPER_MODEL=medium
+RUN python -c "import whisper; whisper.load_model('medium')"
 
 CMD ["python", "whisper-wrapper.py"]
