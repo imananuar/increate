@@ -1,0 +1,16 @@
+FROM alpine:3.18
+
+# Install FFmpeg and Python
+RUN apk add --no-cache \
+    ffmpeg \
+    python3 \
+    py3-pip
+
+WORKDIR /app
+
+COPY requirements-ffmpeg.txt .
+RUN pip3 install -r requirements-ffmpeg.txt
+
+COPY ffmpeg-wrapper.py .
+
+CMD ["python3", "ffmpeg-wrapper.py"]

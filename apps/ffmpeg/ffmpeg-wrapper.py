@@ -4,8 +4,8 @@ import os
 
 app = Flask(__name__)
 
-@app.route('/extract-audio', methods=['POST'])
-def extract_audio():
+@app.route('/audio-to-wav', methods=['POST'])
+def audio_to_wav():
     data = request.json
     input_path = data.get('input')
     output_path = data.get('output')

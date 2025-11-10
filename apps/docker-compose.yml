@@ -20,8 +20,21 @@ services:
     ports:
       - "3001:3000"
     restart: always
+    depends_on:
+      - ffmpeg
     volumes: 
       - ./media:/media
+    networks:
+      - app-network
+
+  ffmpeg:
+    build:
+      context: ./ffmpeg
+      dockerfile: Dockerfile.ffmpeg
+    container_name: ffmpeg
+    restart: always
+    volumes:
+      - ./media:/media  # Shared volume for file access
     networks:
       - app-network
 
