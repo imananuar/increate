@@ -1,0 +1,7 @@
+numpy<2.0
+openai-whisper==20231117
+torch==2.2.2
+torchaudio==2.2.2
+transformers>=4.28.0
+flask==3.0.0
+gunicorn==21.2.0

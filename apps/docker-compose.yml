@@ -22,6 +22,7 @@ services:
     restart: always
     depends_on:
       - ffmpeg
+      - whisper
     volumes: 
       - ./media:/media
     networks:
@@ -32,6 +33,17 @@ services:
       context: ./ffmpeg
       dockerfile: Dockerfile.ffmpeg
     container_name: ffmpeg
+    restart: always
+    volumes:
+      - ./media:/media  # Shared volume for file access
+    networks:
+      - app-network
+
+  whisper:
+    build:
+      context: ./whisper
+      dockerfile: Dockerfile.whisper
+    container_name: whisper-openai
     restart: always
     volumes:
       - ./media:/media  # Shared volume for file access
