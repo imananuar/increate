@@ -7,6 +7,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import { CONST_AI_MODEL } from 'src/constant/app.constants';
 import { InvoiceDto } from 'src/invoice/dto/invoice.dto';
+import { FfmpegService } from 'src/ffmpeg/ffmpeg.service';
 
 const execPromise = promisify(exec);
 
@@ -15,7 +16,11 @@ export class AIService {
   private readonly openai: OpenAI;
   private readonly logger = new Logger("AIService");
 
-  constructor(private configService: ConfigService) {
+  constructor(
+    private configService: ConfigService,
+    private ffmpegService: FfmpegService
+  
+  ) {
     this.openai = new OpenAI({
       apiKey: this.configService.get<string>('XAI_API_KEY') || 'your_api_key', // Fallback for dev; prefer env vars
       baseURL: 'https://api.x.ai/v1',
@@ -120,7 +125,11 @@ export class AIService {
 
     try {
       // Convert WebM → WAV
-      await execPromise(`ffmpeg -y -i "${webmPath}" -ar 16000 -ac 1 -c:a pcm_s16le "${wavPath}"`);
+      // await execPromise(`ffmpeg -y -i "${webmPath}" -ar 16000 -ac 1 -c:a pcm_s16le "${wavPath}"`);
+      const ffmpegRes = await this.ffmpegService.convertAudioToWav(webmPath, wavPath);
+      console.log("FFMPEG RESSSSSS");
+      console.log(ffmpegRes);
+      
       console.log(`Hey it works: ${wavPath}`);
       // Run Whisper on the WAV file
       await execPromise(`whisper "${wavPath}" --model turbo --output_format txt --output_dir transcription`);
